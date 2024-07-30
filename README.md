@@ -2,6 +2,9 @@
 
 ***
 
+### App's Link
+Here : https://busscrapingapp-8wfkv7ruu8ehgpafzvcu2i.streamlit.app/
+
 ### 取得できる情報
 - eventdates : バスの運行日
 - data_get_dates : 今日の日付
