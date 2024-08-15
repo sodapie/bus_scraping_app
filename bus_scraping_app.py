@@ -105,16 +105,21 @@ def scrape(from_where, to_where, till_when):
                     destination_times.append(None)
 
                 # priceをappend
-                td_element = chunk.find('td', class_='SearchCardStructure_structure-table-amountbox-td__dQ2sp')
+                td_element = chunk.find('td', class_='SearchCardStructure_structure-table-planamount-td__OgHr9')
                 if td_element:
                     a_tag = td_element.find('a')
                     if a_tag:
-                        price_text = a_tag.get_text(strip=True)
-                        if '〜' in price_text:  # '〜'が含まれている場合
-                            price = price_text.split('〜')[0]  # 最初の価格のみを抽出（3900~4500の時に、39004500とならないように）
+                        # <span>タグ内の価格情報を取得
+                        span_tag = a_tag.find('span', class_='SearchCardStructure_structure-table-planamount-text__NXUJI')
+                        if span_tag:
+                            price_text = span_tag.get_text(strip=True)
+                            if '〜' in price_text:  # '〜'が含まれている場合
+                                price = price_text.split('〜')[0]  # 最初の価格のみを抽出（5200~7000の時に、5200のみを抽出）
+                            else:
+                                price = ''.join(re.findall(r'\d+', price_text))
+                            prices.append(price.replace(',', '').replace('円', ''))  # カンマや「円」を取り除きappend
                         else:
-                            price = ''.join(re.findall(r'\d+', price_text))
-                        prices.append(price.replace(',', '').replace('円', '')) # カンマを取り除きappend
+                            prices.append(None)
                     else:
                         prices.append(None)
                 else:
