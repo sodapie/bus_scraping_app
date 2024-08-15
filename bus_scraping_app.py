@@ -235,15 +235,20 @@ if st.button('スクレイピング開始'):
         st.session_state.scraped_data = combined_df
         st.write('スクレイピング完了')
 
+start_date = st.session_state.get('start_date', datetime.today().strftime('%Y%m%d'))
+end_date = st.session_state.get('end_date', datetime.today().strftime('%Y%m%d'))
+today = datetime.today().strftime('%Y%m%d')
+
 # データがセッションステートに保存されている場合は表示
 if st.session_state.scraped_data is not None and not st.session_state.scraped_data.empty:
     combined_df = st.session_state.scraped_data
     st.dataframe(combined_df)
     csv = combined_df.to_csv(index=False)
+    file_name = f'bus_{start_date}_{end_date}_on_{today}.csv'
     st.download_button(
         label='CSVとしてダウンロード',
         data=csv,
-        file_name=f'combined_routes_{datetime.today().strftime("%Y%m%d")}.csv',
+        file_name=file_name,
         mime='text/csv'
     )
 
@@ -267,7 +272,7 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         st.download_button(
             label="グラフを保存",
             data=buf1,
-            file_name=f"{datetime.today().strftime('%Y%m%d')}_boxplot.png",
+            file_name=f"bus_{start_date}_{end_date}_on_{today}_boxplot.png",
             mime="image/png"
         )
         buf1.close()
@@ -294,7 +299,7 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         st.download_button(
             label="グラフを保存",
             data=buf2,
-            file_name=f"{datetime.today().strftime('%Y%m%d')}_stripplot.png",
+            file_name=f"bus_{start_date}_{end_date}_on_{today}_stripplot.png",
             mime="image/png"
         )
         buf2.close()
