@@ -236,7 +236,7 @@ if st.button('スクレイピング開始'):
         st.write('スクレイピング完了')
 
 # データがセッションステートに保存されている場合は表示
-if st.session_state.scraped_data is not None:
+if st.session_state.scraped_data is not None and not st.session_state.scraped_data.empty:
     combined_df = st.session_state.scraped_data
     st.dataframe(combined_df)
     csv = combined_df.to_csv(index=False)
