@@ -12,6 +12,7 @@ import time
 import aiohttp
 import asyncio
 import streamlit as st
+import io
 
 def scrape(from_where, to_where, data_list):
     base_url = f'https://www.bushikaku.net/search/{from_where}_{to_where}/'
