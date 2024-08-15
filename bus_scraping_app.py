@@ -273,3 +273,30 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         buf1.close()
     except KeyError:
         st.error('該当するデータが見つかりませんでした')
+
+    try:
+        # 箱ひげ図のプロット
+        plt.figure(figsize=(10, 6))
+        # イベント名の並び順を指定
+        sorted_eventdates = combined_df['eventdates'].unique()
+        sns.stripplot(data=combined_df, x='eventdates', y='prices', order=sorted_eventdates)
+        plt.title('日ごとのバス価格 ストリッププロット')
+        plt.xticks(fontsize=8)
+        
+        fig2 = plt.gcf()  # 現在のFigureを取得
+        st.pyplot(fig2)
+        
+        # Figureをバッファに保存
+        buf2 = io.BytesIO()
+        fig2.savefig(buf2, format="png")
+        buf2.seek(0)
+        
+        st.download_button(
+            label="グラフを保存",
+            data=buf2,
+            file_name=f"{datetime.today().strftime('%Y%m%d')}_stripplot.png",
+            mime="image/png"
+        )
+        buf2.close()
+    except KeyError:
+        st.error('該当するデータが見つかりませんでした')
