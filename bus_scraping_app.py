@@ -160,7 +160,7 @@ def scrape(from_where, to_where, till_when):
     })
 
     # 細かい型の調整
-    df['prices'] = df['prices'].astype(int)
+    df['prices'] = pd.to_numeric(df['prices'], errors='coerce').fillna(0).astype(int)
 
     return df
 
