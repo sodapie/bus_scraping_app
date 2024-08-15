@@ -17,7 +17,6 @@ def scrape(from_where, to_where, data_list):
     base_url = f'https://www.bushikaku.net/search/{from_where}_{to_where}/'
 
     # 今日から一か月分の日付を取得
-    today = datetime.today()
     data_get_date = datetime.today().strftime('%Y%m%d')
 
     eventdates = []
@@ -36,13 +35,14 @@ def scrape(from_where, to_where, data_list):
     }
 
     for date in date_list:
+        date_str = date.strftime("%Y%m%d")
         page_num = 1
         # 次のページがある限り処理を続行する
         while True:
             if page_num == 1:
-                eachday_url = f'{base_url}{date}/'
+                eachday_url = f'{base_url}{date_str}/'
             else:
-                eachday_url = f'{base_url}{date}/page-{page_num}/'
+                eachday_url = f'{base_url}{date_str}/page-{page_num}/'
 
             response = requests.get(eachday_url, headers=headers)
             if response.status_code != 200: # サイトにアクセスできない場合に処理を終了
