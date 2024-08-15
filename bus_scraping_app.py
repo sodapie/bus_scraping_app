@@ -235,8 +235,9 @@ if st.button('スクレイピング開始'):
         st.session_state.scraped_data = combined_df
         st.write('スクレイピング完了')
 
-start_date = st.session_state.get('start_date', datetime.today().strftime('%Y%m%d'))
-end_date = st.session_state.get('end_date', datetime.today().strftime('%Y%m%d'))
+# 日付オブジェクトを文字列に変換
+start_date_str = start_date.strftime('%Y%m%d')
+end_date_str = end_date.strftime('%Y%m%d')
 today = datetime.today().strftime('%Y%m%d')
 
 # データがセッションステートに保存されている場合は表示
@@ -244,7 +245,9 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
     combined_df = st.session_state.scraped_data
     st.dataframe(combined_df)
     csv = combined_df.to_csv(index=False)
-    file_name = f'bus_{start_date}_{end_date}_on_{today}.csv'
+    
+    # ファイル名に反映
+    file_name = f'bus_{start_date_str}_{end_date_str}_on_{today}.csv'
     st.download_button(
         label='CSVとしてダウンロード',
         data=csv,
@@ -272,7 +275,7 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         st.download_button(
             label="グラフを保存",
             data=buf1,
-            file_name=f"bus_{start_date}_{end_date}_on_{today}_boxplot.png",
+            file_name=f"bus_{start_date_str}_{end_date_str}_on_{today}_boxplot.png",
             mime="image/png"
         )
         buf1.close()
@@ -280,7 +283,7 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         st.error('該当するデータが見つかりませんでした')
 
     try:
-        # 箱ひげ図のプロット
+        # ストリッププロットのプロット
         plt.figure(figsize=(10, 6))
         # イベント名の並び順を指定
         sorted_eventdates = combined_df['eventdates'].unique()
@@ -299,7 +302,7 @@ if st.session_state.scraped_data is not None and not st.session_state.scraped_da
         st.download_button(
             label="グラフを保存",
             data=buf2,
-            file_name=f"bus_{start_date}_{end_date}_on_{today}_stripplot.png",
+            file_name=f"bus_{start_date_str}_{end_date_str}_on_{today}_stripplot.png",
             mime="image/png"
         )
         buf2.close()
