@@ -214,6 +214,12 @@ end_date = st.date_input('終了日を選択してください')
 if start_date > end_date:
     st.error("開始日は終了日より前でなければなりません。")
 
+st.markdown("<hr>", unsafe_allow_html=True)
+
+# セッションステートにデータを保持
+if 'scraped_data' not in st.session_state:
+    st.session_state.scraped_data = None
+
 if st.button('スクレイピング開始'):
     all_dfs = []
     with st.spinner('スクレイピング中...'):
@@ -225,12 +231,36 @@ if st.button('スクレイピング開始'):
             df = scrape(from_where, to_where, date_list)
             all_dfs.append(df)
         combined_df = pd.concat(all_dfs, ignore_index=True)
+        st.session_state.scraped_data = combined_df
         st.write('スクレイピング完了')
-        st.dataframe(combined_df)
-        csv = combined_df.to_csv(index=False)
-        st.download_button(
-            label='CSVとしてダウンロード',
-            data=csv,
-            file_name=f'combined_routes_{datetime.today().strftime("%Y%m%d")}.csv',
-            mime='text/csv'
+
+# データがセッションステートに保存されている場合は表示
+if st.session_state.scraped_data is not None:
+    combined_df = st.session_state.scraped_data
+    st.dataframe(combined_df)
+    csv = combined_df.to_csv(index=False)
+    st.download_button(
+        label='CSVとしてダウンロード',
+        data=csv,
+        file_name=f'combined_routes_{datetime.today().strftime("%Y%m%d")}.csv',
+        mime='text/csv'
+    )
+
+    # 箱ひげ図のプロット
+    plt.figure(figsize=(10, 6))
+    # イベント名の並び順を指定
+    sorted_eventdates = combined_df['eventdates'].unique()
+    sns.boxplot(data=combined_df, x='eventdates', y='prices', order=sorted_eventdates)
+    plt.title('日ごとのバス価格 箱ひげ図')
+    plt.xticks(rotation=20, fontsize=6)
+    plt.savefig("boxplot.png")
+    st.pyplot(plt)
+
+    # グラフを保存するボタン
+    with open("boxplot.png", "rb") as file:
+        btn = st.download_button(
+            label="グラフを保存",
+            data=file,
+            file_name=f"{datetime.today().strftime('%Y%m%d')}_boxplot.png",
+            mime="image/png"
         )
