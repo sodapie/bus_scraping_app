@@ -252,7 +252,7 @@ if st.session_state.scraped_data is not None:
     sorted_eventdates = combined_df['eventdates'].unique()
     sns.boxplot(data=combined_df, x='eventdates', y='prices', order=sorted_eventdates)
     plt.title('日ごとのバス価格 箱ひげ図')
-    plt.xticks(rotation=20, fontsize=6)
+    plt.xticks(fontsize=8)
     plt.savefig("boxplot.png")
     st.pyplot(plt)
 
