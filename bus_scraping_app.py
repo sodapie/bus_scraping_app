@@ -256,6 +256,11 @@ if st.session_state.scraped_data is not None:
     plt.savefig("boxplot.png")
     st.pyplot(plt)
 
+    # Figureをバッファに保存
+    buf1 = io.BytesIO()
+    fig1.savefig(buf1, format="png")
+    buf1.seek(0)
+
     # グラフを保存するボタン
     with open("boxplot.png", "rb") as file:
         btn = st.download_button(
@@ -264,3 +269,4 @@ if st.session_state.scraped_data is not None:
             file_name=f"{datetime.today().strftime('%Y%m%d')}_boxplot.png",
             mime="image/png"
         )
+    buf1.close()
