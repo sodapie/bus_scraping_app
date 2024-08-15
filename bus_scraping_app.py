@@ -247,27 +247,29 @@ if st.session_state.scraped_data is not None:
         mime='text/csv'
     )
 
-    # 箱ひげ図のプロット
-    plt.figure(figsize=(10, 6))
-    # イベント名の並び順を指定
-    sorted_eventdates = combined_df['eventdates'].unique()
-    sns.boxplot(data=combined_df, x='eventdates', y='prices', order=sorted_eventdates)
-    plt.title('日ごとのバス価格 箱ひげ図')
-    plt.xticks(fontsize=8)
-    plt.savefig("boxplot.png")
-    st.pyplot(plt)
-
-    # Figureをバッファに保存
-    buf1 = io.BytesIO()
-    fig1.savefig(buf1, format="png")
-    buf1.seek(0)
-
-    # グラフを保存するボタン
-    with open("boxplot.png", "rb") as file:
-        btn = st.download_button(
+    try:
+        # 箱ひげ図のプロット
+        plt.figure(figsize=(10, 6))
+        # イベント名の並び順を指定
+        sorted_eventdates = combined_df['eventdates'].unique()
+        sns.boxplot(data=combined_df, x='eventdates', y='prices', order=sorted_eventdates)
+        plt.title('日ごとのバス価格 箱ひげ図')
+        plt.xticks(fontsize=8)
+        
+        fig1 = plt.gcf()  # 現在のFigureを取得
+        st.pyplot(fig1)
+        
+        # Figureをバッファに保存
+        buf1 = io.BytesIO()
+        fig1.savefig(buf1, format="png")
+        buf1.seek(0)
+        
+        st.download_button(
             label="グラフを保存",
-            data=file,
+            data=buf1,
             file_name=f"{datetime.today().strftime('%Y%m%d')}_boxplot.png",
             mime="image/png"
         )
-    buf1.close()
+        buf1.close()
+    except KeyError:
+        st.error('該当するデータが見つかりませんでした')
