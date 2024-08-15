@@ -56,7 +56,7 @@ def scrape(from_where, to_where, data_list):
 
             for chunk in chunks:
                 # event_dateをappend
-                eventdates.append(date)
+                eventdates.append(date_str)
 
                 # data_get_dateをappend
                 data_get_dates.append(data_get_date)
