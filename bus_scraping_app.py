@@ -210,7 +210,7 @@ if all_selected:
 
 # カレンダーから開始日と終了日を選択
 start_date = st.date_input('開始日を選択してください')
-end_date = st.date_input('終了日を選択してください')
+end_date = st.date_input('終了日を選択してください（今日から3カ月先まで）')
 
 if start_date > end_date:
     st.error("開始日は終了日より前でなければなりません。")
