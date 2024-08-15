@@ -13,12 +13,11 @@ import aiohttp
 import asyncio
 import streamlit as st
 
-def scrape(from_where, to_where, till_when):
+def scrape(from_where, to_where, data_list):
     base_url = f'https://www.bushikaku.net/search/{from_where}_{to_where}/'
 
     # 今日から一か月分の日付を取得
     today = datetime.today()
-    date_list = [(today + timedelta(days=i)).strftime("%Y%m%d") for i in range(till_when)]
     data_get_date = datetime.today().strftime('%Y%m%d')
 
     eventdates = []
@@ -208,14 +207,22 @@ all_selected = st.checkbox('全てのルートをスクレイピング')
 if all_selected:
     selected_routes_display = list(routes_display.keys())
 
-till_when = st.number_input('日数を入力してください', min_value=1, max_value=90, value=1)
+# カレンダーから開始日と終了日を選択
+start_date = st.date_input('開始日を選択してください')
+end_date = st.date_input('終了日を選択してください')
+
+if start_date > end_date:
+    st.error("開始日は終了日より前でなければなりません。")
 
 if st.button('スクレイピング開始'):
     all_dfs = []
     with st.spinner('スクレイピング中...'):
+        # 開始日から終了日までの日付のリストを作成
+        date_list = pd.date_range(start=start_date, end=end_date).to_pydatetime().tolist()
+
         for selected_route_display in selected_routes_display:
             from_where, to_where = routes_display[selected_route_display].split('-')
-            df = scrape(from_where, to_where, till_when)
+            df = scrape(from_where, to_where, date_list)
             all_dfs.append(df)
         combined_df = pd.concat(all_dfs, ignore_index=True)
         st.write('スクレイピング完了')
